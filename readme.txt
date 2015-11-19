@@ -5,7 +5,7 @@ http://www.arduinotech.cz/inpage/jak-jednoduse-na-gsm-v-dil-arduinotech-gsm-shie
 
 Tøída AGS
 Název tøídy: AGS (zkratka ArduinotechGSMShield)
-Vstupní parametry: debug mód -> 1=zapnutý, 0=vypnutý
+Vstupní parametry: debug mód -> 1=zapnutý, 0=vypnutý, debug mód vypisuje podrobnosti na sériový kanál u nìterých funkcí.
 Výstupní parametry: žádné
 Pøíklad: 
 vytvoøení instance tøídy ve sketchi:
