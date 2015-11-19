@@ -1,5 +1,5 @@
 ArduinotechGSMShield library description
-The library is written for theArduinotech GSM shield, see details here (Sorry, Czech only at this moment):
+The library is written for the Arduinotech GSM shield, see details here (Sorry, Czech only at this moment, use google translator or just look at the pictures, you will understand what is it about):
 http://www.arduinotech.cz/inpage/jak-jednoduse-na-gsm-v-dil-arduinotech-gsm-shield/
 
 Class AGS
