@@ -1,0 +1,24 @@
+#######################################
+# Datatypes (KEYWORD1)
+#######################################
+ArduinotechGSMShield	KEYWORD1
+AGS					KEYWORD1
+
+#######################################
+# Methods and Functions (KEYWORD2)
+#######################################
+
+begin			KEYWORD2
+SIM800Init		KEYWORD2
+sendSMS			KEYWORD2 
+timeStamp		KEYWORD2
+checkInput		KEYWORD2
+restartSIMHW	KEYWORD2
+getNumber		KEYWORD2
+getQuality		KEYWORD2
+callEnd			KEYWORD2
+checkCallAndSMS	KEYWORD2
+getSMSContent	KEYWORD2
+makeCall		KEYWORD2
+getPrividerName	KEYWORD2
+ 
