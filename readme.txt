@@ -1,5 +1,5 @@
 Popis knihovny ArduinotechGSMShield
-Tato knihovna je urèená pro shield:
+Tato knihovna je urèená pro tento shield:
 http://www.arduinotech.cz/produkt/gsm-shield-arduinotech/, podrobnosti naleznete v èlánku:
 http://www.arduinotech.cz/inpage/jak-jednoduse-na-gsm-v-dil-arduinotech-gsm-shield/
 
