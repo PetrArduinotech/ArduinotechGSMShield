@@ -32,14 +32,15 @@ void setup()
 	pinMode(RELE1, OUTPUT);
 	digitalWrite(RELE1, LOW);
 	pinMode(LED, OUTPUT);
-	digitalWrite(LED, HIGH);
+	digitalWrite(LED, LOW);
 	modul.begin();
 	notificationSent = true;
+	digitalWrite(LED, HIGH);
 
 	//teplomìr
 	sensors.begin();
-	if (sensors.getDeviceCount()>0) Serial.println("Teplomer nalezen!");
-	else Serial.println("Teplomer NENALEZEN!!!");
+	if (sensors.getDeviceCount()>0) Serial.println F("Teplomer nalezen!");
+	else Serial.println F("Teplomer NENALEZEN!!!");
 	oneWire.reset_search();
 	oneWire.search(insideThermometer);
 	//nastav rozliseni
@@ -47,7 +48,8 @@ void setup()
 	sensors.requestTemperatures();
 	printAddress(insideThermometer);
 	printTemperature(insideThermometer);
-	Serial.println("****************************************");
+	Serial.println F("****************************************");
+	while (Serial.available() > 0) Serial.read();
 
 }
 
@@ -86,9 +88,9 @@ void loop()
 	{
 		modul.sendSMS(SERVICE_NUMBER, "Pozor, teplota byla prekrocena!!!");
 		notificationSent = true;
-		Serial.println("Teplota prekrocena!!! Odeslana SMS.");
+		Serial.println F("Teplota prekrocena!!! Odeslana SMS.");
 		digitalWrite(VENTILATOR, HIGH);
-		Serial.println("Ventilator byl zapnut");
+		Serial.println F("Ventilator byl zapnut");
 	}
 	//vypni ventilator
 	if ((teplota < 24.0) && (notificationSent == false))
@@ -96,7 +98,7 @@ void loop()
 		modul.sendSMS(SERVICE_NUMBER, "Teplota v normalu");
 		notificationSent = true;
 		digitalWrite(VENTILATOR, LOW);
-		Serial.println("Ventilator byl vypnut");
+		Serial.println F("Ventilator byl vypnut");
 	}
 	//smaž pøíznak odeslané SMSky, jakmile se teplota pøiblíží
 	//k hranici sepnutí ventiátoru
@@ -108,13 +110,14 @@ void loop()
 	//a zapni ventilátor - ošetøení stavu po restartu
 	if (teplota > 35.0) digitalWrite(VENTILATOR, HIGH);
 	delay(1000);
+	while (Serial.available() > 0) Serial.read();
 }
 
 
 //pro teplomìr
 void printAddress(DeviceAddress deviceAddress)
 {
-	Serial.print("Adresa teplomeru:");
+	Serial.print F("Adresa teplomeru:");
 	for (uint8_t i = 0; i < 8; i++)
 	{
 		// zero pad the address if necessary
@@ -127,7 +130,7 @@ void printAddress(DeviceAddress deviceAddress)
 void printTemperature(DeviceAddress deviceAddress)
 {
 	float tempC = sensors.getTempC(deviceAddress);
-	Serial.print("Teplota: ");
+	Serial.print F("Teplota: ");
 	Serial.print(tempC);
 	Serial.write(176);
 	Serial.println("C");
