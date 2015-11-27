@@ -445,3 +445,10 @@ void AGS::clrSIMbuffer()
 		SIM800.read();
 	}
 }
+//Check if SIM800 is attached to GSM
+bool AGS::isConnected()
+{
+	if ((sendATcommand("AT+CREG?", "+CREG: 0,1", 1000) ||
+		sendATcommand("AT+CREG?", "+CREG: 0,5", 1000)) == 1) return true;
+	else return false;
+}

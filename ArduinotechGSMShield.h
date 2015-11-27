@@ -48,6 +48,7 @@ class AGS
 		void callEnd();
 		void makeCall(String callNumber);
 		uint8_t checkCallAndSMS();
+		bool isConnected();
 	
 	
 	private:
