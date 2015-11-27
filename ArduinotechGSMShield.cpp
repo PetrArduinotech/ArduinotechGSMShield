@@ -22,14 +22,14 @@ void AGS::begin()
 //SIM800 initialization procedure for simple SMS and call features
 void AGS::SIM800Init()
 {
-
 	while (Serial.available() > 0) Serial.read();
 	Serial.println F("****************************************");
 	while (sendATcommand("AT", "OK", 2000) == 0);
 	Serial.println F("SIM800 available!");
+	delay(2000);
 	//otestuj registraci do site
-	while ((sendATcommand("AT+CREG?", "+CREG: 0,1", 500) ||
-		sendATcommand("AT+CREG?", "+CREG: 0,5", 500)) == 0);
+	while ((sendATcommand("AT+CREG?", "+CREG: 0,1", 1000) ||
+		sendATcommand("AT+CREG?", "+CREG: 0,5", 1000)) == 0);
 	while (Serial.available() > 0) Serial.read();
 	Serial.println F("SIM800 registered to GSM!");
 	//parameters to obtain time stamp from GSM network

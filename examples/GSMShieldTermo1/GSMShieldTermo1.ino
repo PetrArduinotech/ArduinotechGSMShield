@@ -110,12 +110,6 @@ void loop()
 	//a zapni ventilátor - ošetøení stavu po restartu
 	if (teplota > 35.0) digitalWrite(VENTILATOR, HIGH);
 	while (Serial.available() > 0) Serial.read();
-	if (modul.isConnected() == false)
-	{
-		digitalWrite(LED, LOW);
-		modul.SIM800Init();
-		digitalWrite(LED, HIGH);
-	}
 	delay(1000);
 }
 
