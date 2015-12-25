@@ -31,7 +31,7 @@ uint32_t ticker;
 String APN = "internet.t-mobile.cz";
 //O2 a VODAFONE
 //String APN = "internet";
-String thingSpeak = "api.thingspeak.com/update?api_key=54DLXE3I1UARK61C&field1=";
+String thingSpeak = "api.thingspeak.com/update?api_key=54DLXE3I1PETR61C&field1=";
 
 //Vstupní parametry a inicializace shieldu
 
@@ -76,7 +76,7 @@ void setup()
 /*Hlavní smyèka – zmìøí teplotu a pak ji pøes HTTP GET
 GPRS prezentuje do kanálu Thingspeak.com s tímto data
 feed update:
-GET api.thingspeak.com/update?api_key=54DLXE3I1UARK61C&field1=xx
+GET api.thingspeak.com/update?api_key=54DLXE3I1PETR61C&field1=xx
 xx = teplota
 */
 
