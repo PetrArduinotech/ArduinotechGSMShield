@@ -103,8 +103,24 @@ Pøíklad:
 Serial.println(“GSM signal quality:” + getQuality());
 
 timeStamp();
-Popis: Returns string with time stamp obtained from GSM network, quite accurate one.
+Description: Returns string with time stamp obtained from GSM network, quite accurate one.
 Input parameteres: none
 Output parameteres: String time stamp
 Example:
 Serial.println(“GSM time:” + timeStamp());
+
+GPRSInit(String APN)
+Description: Initialize of GPRS with given APN
+Input parameteres: String APN
+Output parameteres: bool, 1 = GPRS successfuly attached
+Example:
+modul.GPRSInit("internet.t-mobile.cz");
+
+sendDataGPRS(String dataToSend)
+Description: sends data over GPRS using HTTP GET method
+Input parameteres String data to send - mostly HTTP link
+Output parameteres: String with returned data from HTTP GET, if communication failed, then response is COMMUNICATION FAILURE
+Example:
+modul.sendDataGPRS("api.thingspeak.com/update?api_key=54DLXE3I1PETR61C&field1=25");
+
+

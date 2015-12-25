@@ -109,3 +109,19 @@ Vstupní parametry: žádné
 Výstupní parametry: String èasová znaèka
 Pøíklad:
 Serial.println(“GSM time:” + timeStamp());
+
+GPRSInit(String APN)
+Popis: Inicializuje GPRS dle zadaného APN
+Vstupní parametry: String APN
+Výstupní parametry: bool, 1 = úspìšný attach GPRS
+Pøíklad:
+modul.GPRSInit("internet.t-mobile.cz");
+
+sendDataGPRS(String dataToSend)
+Popis: odešle data pomocí GPRS metodou HTTP GET
+Vstupní parametry: String data k odeslání - nejèastìjí link na HTTP
+Výstupní parametry: String s vrácenými daty po HTTP GET, pokud se komunikace nezdaøila, bude návratová hodnota COMMUNICATION FAILURE
+Pøíklad:
+modul.sendDataGPRS("api.thingspeak.com/update?api_key=54DLXE3I1PETR61C&field1=25");
+
+

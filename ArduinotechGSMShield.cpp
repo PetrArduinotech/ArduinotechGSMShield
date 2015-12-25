@@ -85,7 +85,6 @@ String AGS::sendDataGPRS(String dataToSend)
 	if (_debug == 1) Serial.println F("***********GPRS communication***********");
 	SIM800.println("AT+HTTPPARA=\"URL\"," + dataToSend);
 	while (SIM800.find("OK"));
-	Serial.println F("Data has been sent");
 	delay(10);
 	clrSIMbuffer();
 	while( (sendATcommand("AT+HTTPACTION=0", "+HTTPACTION:", 10000)) == 0 );
@@ -93,7 +92,7 @@ String AGS::sendDataGPRS(String dataToSend)
 	clrSIMbuffer();
 	//read response
 	SIM800.println("AT+HTTPREAD");
-	delay(1000);
+	delay(500);
 	char gsmc;
 	String content="";	
 	if(SIM800.find("+HTTPREAD:"))
