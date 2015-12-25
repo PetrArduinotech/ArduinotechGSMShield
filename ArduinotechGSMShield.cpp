@@ -36,7 +36,7 @@ void AGS::SIM800Init()
 	while (sendATcommand("AT+CLTS=1", "OK", 500) == 0);
 	while (sendATcommand("AT+CENG=3", "OK", 500) == 0);
 	while (Serial.available() > 0) Serial.read();
-	Serial.print("Time stamp from GSM:" + timeStamp());
+	Serial.println("Time stamp from GSM:" + timeStamp());
 	Serial.println("GSM signal quality:" + getQuality());
 	Serial.println("GSM provider:" + getProviderName());
 	sendATcommand("AT+CMGF=1", "OK", 500);
@@ -50,6 +50,96 @@ void AGS::SIM800Init()
 	Serial.println F("SIM800 has been configured!");
 	Serial.println F("****************************************");
 }
+
+bool AGS::GPRSInit(String APN)
+{
+	
+	APN = "AT+SAPBR=3,1,\"APN\",\"" + APN + "\"" ;
+	char APNchar[sizeof(APN)+1];
+	for (uint8_t i; i < (sizeof(APN) + 1); i++) APNchar[i] = APN[i];
+	
+	while( (sendATcommand("AT+SAPBR=3,1,\"CONTYPE\",\"GPRS\"", "OK", 500)) == 0 );
+	//APN = "AT+SAPBR=3,1,\"APN\",\" + APN + "\"";
+	while( (sendATcommand(APNchar, "OK", 500)) == 0 );
+	SIM800.println("AT+SAPBR=1,1");
+	delay(1000);
+	SIM800.println("AT+SAPBR=2,1");
+	delay(1000);
+	clrSIMbuffer();
+	//while( (sendATcommand("AT+HTTPINIT", "OK", 3000))|| (sendATcommand("AT+HTTPINIT", "ERROR", 3000))== 0 );
+	while( (sendATcommand("AT+HTTPINIT", "OK", 3000)));
+	if (_debug == 1)
+	{
+		Serial.println F("GPRS Attached");
+		Serial.println F("****************************************");
+	}		
+	return 1;
+}
+
+String AGS::sendDataGPRS(String dataToSend)
+{
+	int dataLength;
+	dataToSend = "\""+dataToSend+"\"";
+	delay(10);
+	clrSIMbuffer();
+	if (_debug == 1) Serial.println F("***********GPRS communication***********");
+	SIM800.println("AT+HTTPPARA=\"URL\"," + dataToSend);
+	while (SIM800.find("OK"));
+	Serial.println F("Data has been sent");
+	delay(10);
+	clrSIMbuffer();
+	while( (sendATcommand("AT+HTTPACTION=0", "+HTTPACTION:", 10000)) == 0 );
+	delay(10);
+	clrSIMbuffer();
+	//read response
+	SIM800.println("AT+HTTPREAD");
+	delay(1000);
+	char gsmc;
+	String content="";	
+	if(SIM800.find("+HTTPREAD:"))
+	{
+		if (_debug == 1) Serial.println("Reading response ...");
+		while(SIM800.available()>0)
+		{
+			gsmc = SIM800.read();
+			content += gsmc; 
+			if (gsmc == '\n') 
+			{
+				content = content.substring(0,content.length()-2);
+				dataLength = content.toInt();
+				if (_debug == 1) Serial.println("Data Lenght:" + String(dataLength));
+				content = "";
+				break;
+			}
+		}
+		//read content
+		if (_debug == 1)Serial.print("Content:");
+		delay(100);
+		while(SIM800.available()>0)
+		{
+			gsmc = SIM800.read();
+			content += gsmc;
+			dataLength --;
+			if (dataLength < -1)
+			{
+				content = content.substring(0,content.length()-2);
+				if (_debug == 1) Serial.println(content);
+				content = "";
+				break;
+			}
+		}
+	
+	}
+	else
+	{
+		return "COMMUNICATION FAILURE";
+	}
+	delay(10);
+    clrSIMbuffer();
+	if (_debug == 1) Serial.println F("****************************************");
+	return content;
+}
+
 
 //Send AT command to SIM800
 int8_t AGS::sendATcommand(char* ATcommand, char* expected_answer, unsigned int timeout)
@@ -269,91 +359,6 @@ void AGS::makeCall(String callNumber)
 	SIM800.println(";");
 }
 
-
-//Check if SMS is present in SIM800
-/*
-uint8_t AGS::checkSMS()
-{
-
-	char g;
-	String gcmd;
-	uint8_t gindex;
-	clrSIMbuffer();
-	SIM800.println("AT+CMGR=1");
-	delay(100);
-	//echo surpress
-	while (SIM800.available()>0)
-	{
-		g = SIM800.read();
-		gcmd += g;
-		if (g == '\n')
-		{
-			gcmd = "";
-			break;
-		}
-	}
-
-	//read first line with command response
-	while (SIM800.available()>0)
-	{
-		g = SIM800.read();
-		gcmd += g;
-		if (g == '\n')
-		{
-
-			if (gcmd.substring(0, 2) == "OK") return 0;
-			
-			if (gcmd.substring(0, 5) == "+CMGR")
-			{
-				
-				if (_debug == 1)
-				{
-					Serial.println F("****************************************");
-					Serial.println F("New SMS alert!");
-				}
-				
-				//first + "+CMGR"
-				gindex = gcmd.indexOf('+');
-				if (gindex < 0) return 0;
-				//cut off first + character
-				gcmd = gcmd.substring(gindex + 1);
-				//sender number
-				gindex = gcmd.indexOf('+');
-				number = gcmd.substring(gindex + 4, gindex + 13);
-				Serial.println("From:" + number);
-				//read SMS content
-				gcmd = "";
-				delay(50);
-				while (SIM800.available()>0)
-				{
-					g = SIM800.read();
-					gcmd += g;
-					if (g == '\n')
-					{
-						gcmd = gcmd.substring(0, gcmd.length() - 2);
-						Serial.println("SMS content:" + gcmd);
-						sendATcommand("AT+CMGD=1", "OK", 1000);
-						sendATcommand("AT+CMGD=1,4", "OK", 1000);
-						if (_debug == 1)
-						{
-							Serial.println F("SMS deleted.");
-							Serial.println F("****************************************");
-						}
-						return 2;
-					}
-				}
-				gcmd = "";
-				sendATcommand("AT+CMGD=1", "OK", 1000);
-				sendATcommand("AT+CMGD=1,4", "OK", 1000);
-				return 0;
-			}
-
-
-		}
-	}
-	return 0;
-}
-*/
 //Get last Sender or A-party number
 String AGS::getNumber()
 {

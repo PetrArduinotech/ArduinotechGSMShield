@@ -49,6 +49,8 @@ class AGS
 		void makeCall(String callNumber);
 		uint8_t checkCallAndSMS();
 		bool isConnected();
+		bool GPRSInit(String APN);
+		String sendDataGPRS(String dataToSend);
 	
 	
 	private:

@@ -21,4 +21,6 @@ checkCallAndSMS	KEYWORD2
 getSMSContent	KEYWORD2
 makeCall		KEYWORD2
 getPrividerName	KEYWORD2
+GPRSInit   		KEYWORD2
+sendDataGPRS	KEYWORD2
  
