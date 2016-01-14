@@ -247,9 +247,9 @@ uint8_t AGS::checkCallAndSMS()
 			if (gcmd.substring(gindex+1,gindex+6) == "CLIP:") 
 			{
 				
-
-				gindex = gcmd.indexOf(':');
-				gcmd = gcmd.substring((gindex + 6), (gindex + 15));
+				//+CLIP: "420739822476"
+				gindex = gcmd.indexOf('"');
+				gcmd = gcmd.substring((gindex + 1), (gindex + 13));
 				if(_debug == 1)
 				{
 					Serial.println("Call received!");
