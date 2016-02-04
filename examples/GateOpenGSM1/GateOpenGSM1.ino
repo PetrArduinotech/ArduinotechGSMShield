@@ -33,7 +33,7 @@ void loop()
    if (infoStatus == 1)
    {
       number = modul.getNumber();
-      Serial.println("Call from: +" + number);
+      Serial.println("Call from:" + number);
       modul.callEnd();
       
       if (number == "420739822476") 
