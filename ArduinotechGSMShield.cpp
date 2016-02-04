@@ -248,8 +248,19 @@ uint8_t AGS::checkCallAndSMS()
 			{
 				
 				//+CLIP: "420739822476"
-				gindex = gcmd.indexOf('"');
-				gcmd = gcmd.substring((gindex + 1), (gindex + 13));
+				//cut +CLIP:
+				gcmd = gcmd.substring(gindex+6);
+				if (gcmd.indexOf('+') != -1)
+				{
+					gindex = gcmd.indexOf('+');
+					gcmd = gcmd.substring((gindex + 1), (gindex + 13));
+				}
+				else
+				{
+					gindex = gcmd.indexOf('"');
+					gcmd = gcmd.substring((gindex + 1), (gindex + 13));
+				}
+				
 				if(_debug == 1)
 				{
 					Serial.println("Call received!");
