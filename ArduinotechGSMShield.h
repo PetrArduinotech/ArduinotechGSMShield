@@ -29,6 +29,7 @@ class AGS
 {
 	public:
 		String number;
+		String actTime;
 		String SMScontent;
 		AGS(uint8_t speed);
 		static SoftwareSerial SIM800;
@@ -44,6 +45,7 @@ class AGS
 		
 		void checkInput();
 		String timeStamp();
+		String actualTime();
 		void restartSIMHW();
 		void callEnd();
 		void makeCall(String callNumber);

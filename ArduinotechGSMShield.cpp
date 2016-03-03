@@ -60,14 +60,14 @@ bool AGS::GPRSInit(String APN)
 	
 	while( (sendATcommand("AT+SAPBR=3,1,\"CONTYPE\",\"GPRS\"", "OK", 500)) == 0 );
 	//APN = "AT+SAPBR=3,1,\"APN\",\" + APN + "\"";
-	while( (sendATcommand(APNchar, "OK", 500)) == 0 );
+	while( (sendATcommand(APNchar, "OK", 1000)) == 0 );
 	SIM800.println("AT+SAPBR=1,1");
 	delay(1000);
 	SIM800.println("AT+SAPBR=2,1");
 	delay(1000);
 	clrSIMbuffer();
-	//while( (sendATcommand("AT+HTTPINIT", "OK", 3000))|| (sendATcommand("AT+HTTPINIT", "ERROR", 3000))== 0 );
-	while( (sendATcommand("AT+HTTPINIT", "OK", 3000)));
+	while( (sendATcommand("AT+HTTPINIT", "OK", 3000))|| (sendATcommand("AT+HTTPINIT", "ERROR", 3000))== 0 );
+	//while( (sendATcommand("AT+HTTPINIT", "OK", 3000)));
 	if (_debug == 1)
 	{
 		Serial.println F("GPRS Attached");
@@ -234,6 +234,7 @@ uint8_t AGS::checkCallAndSMS()
 	String gcmd;
 	uint8_t gindex;
 	
+	
 	//check call presence
 	
 	while (SIM800.available()>0)
@@ -249,12 +250,14 @@ uint8_t AGS::checkCallAndSMS()
 				
 				//+CLIP: "420739822476"
 				//cut +CLIP:
+				//check if + is present and parse according this character
 				gcmd = gcmd.substring(gindex+6);
 				if (gcmd.indexOf('+') != -1)
 				{
 					gindex = gcmd.indexOf('+');
 					gcmd = gcmd.substring((gindex + 1), (gindex + 13));
 				}
+				//parse according first " character
 				else
 				{
 					gindex = gcmd.indexOf('"');
@@ -270,7 +273,13 @@ uint8_t AGS::checkCallAndSMS()
 				number = gcmd;
 				return 1;
 			}
-			else return 0;
+			else 
+			{
+			//get timeStamp
+			//actTime = timeStamp();
+			return 0;
+			}	
+			
 		}
 	}
 	
@@ -319,7 +328,7 @@ uint8_t AGS::checkCallAndSMS()
 				gcmd = gcmd.substring(gindex + 1);
 				//sender number
 				gindex = gcmd.indexOf('+');
-				number = gcmd.substring(gindex + 4, gindex + 13);
+				number = gcmd.substring(gindex + 1, gindex + 13);
 				Serial.println("From:" + number);
 				//read SMS content
 				gcmd = "";
@@ -328,12 +337,13 @@ uint8_t AGS::checkCallAndSMS()
 				{
 					g = SIM800.read();
 					gcmd += g;
-					if (g == '\n')
+					if ((g == '\n') && (gcmd.length()>2))
 					{
 						gcmd = gcmd.substring(0, gcmd.length() - 2);
 						Serial.println("SMS Content:" + gcmd);
-						sendATcommand("AT+CMGD=1", "OK", 1000);
-						sendATcommand("AT+CMGD=1,4", "OK", 1000);
+						sendATcommand("AT+CMGD=1", "OK", 2000);
+						sendATcommand("AT+CMGD=1,4", "OK", 2000);
+						clrSIMbuffer();
 						if (_debug == 1)
 						{
 							Serial.println F("SMS deleted.");
@@ -344,14 +354,19 @@ uint8_t AGS::checkCallAndSMS()
 					}
 				}
 				gcmd = "";
-				sendATcommand("AT+CMGD=1", "OK", 1000);
-				sendATcommand("AT+CMGD=1,4", "OK", 1000);
+				sendATcommand("AT+CMGD=1", "OK", 2000);
+				sendATcommand("AT+CMGD=1,4", "OK", 2000);
+				clrSIMbuffer();
+				//get timeStamp
+				//actTime = timeStamp();
 				return 0;
 			}
 
 
 		}
 	}
+	//get timeStamp
+	//actTime = timeStamp();
 	return 0;
 }
 
@@ -367,6 +382,7 @@ void AGS::makeCall(String callNumber)
 	SIM800.print("ATD ");
 	SIM800.print(callNumber);
 	SIM800.println(";");
+	clrSIMbuffer();
 }
 
 //Get last Sender or A-party number
@@ -421,6 +437,7 @@ void AGS::sendSMS(String number, String sms)
 	delay(100);
 	sendATcommand("AT+CMGD=1", "OK", 2000);
 	sendATcommand("AT+CMGD=1,4", "OK", 2000);
+	sendATcommand("AT+CMGD=1", "OK", 2000);
 	delay(500);
 	clrSIMbuffer();
 	if (_debug==1)
@@ -439,6 +456,10 @@ String AGS::timeStamp()
 	//13/11/04,15:23:19+04
 	//return ("20"+ts.substring(0,2)+ts.substring(3,5)+ts.substring(6,8)+ts.substring(9,11)+ts.substring(12,14)+ts.substring(15,17));
 	return ts;
+}
+String AGS::actualTime()
+{
+	return actTime;
 }
 
 //HW restart of SIM800
